@@ -15,6 +15,13 @@ class AttendanceController extends Controller
     {
     }
 
+    public function index(Request $request): AnonymousResourceCollection
+    {
+        $perPage = min(max($request->integer('per_page', 15), 1), 100);
+
+        return AttendanceResource::collection($this->attendances->list($perPage));
+    }
+
     public function today(): AnonymousResourceCollection
     {
         return AttendanceResource::collection($this->attendances->today());
