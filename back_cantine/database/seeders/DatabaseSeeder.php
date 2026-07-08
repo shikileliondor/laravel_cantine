@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'pin_code' => env('DEFAULT_USER_PIN', '1234'),
         ]);
     }
 }

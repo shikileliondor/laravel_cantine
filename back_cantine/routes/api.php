@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/login/pin', [AuthController::class, 'loginWithPin'])
+    ->middleware('throttle:10,1')
+    ->name('login.pin');
 
 Route::middleware('auth:sanctum')->group(function (): void {
     Route::get('/user', fn (Request $request) => $request->user())->name('user');
