@@ -62,7 +62,37 @@ Le champ `token` doit ensuite etre envoye dans l'en-tete HTTP `Authorization`.
 
 > Important : les identifiants ci-dessus sont des identifiants de developpement issus du seeder/factory. Ils ne doivent jamais exister en production.
 
-### 2. Appeler une route protegee
+### 2. Connexion rapide par code PIN
+
+Un mode de connexion simple est aussi disponible pour une borne ou une tablette interne. Le code PIN de l'utilisateur de developpement est configure via `DEFAULT_USER_PIN` dans `.env` et vaut `1234` par defaut dans `.env.example`.
+
+```bash
+curl -X POST "http://localhost:8000/api/login/pin" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "pin_code": "1234",
+    "device_name": "borne-cantine"
+  }'
+```
+
+Reponse attendue :
+
+```json
+{
+  "message": "Connexion par code PIN reussie.",
+  "token": "1|exemple_de_token_sanctum",
+  "user": {
+    "id": 1,
+    "name": "Test User",
+    "email": "test@example.com"
+  }
+}
+```
+
+> Important : choisissez un PIN different en production, gardez-le confidentiel et limitez ce mode aux appareils de confiance.
+
+### 3. Appeler une route protegee
 
 ```bash
 curl "http://localhost:8000/api/user" \
@@ -70,7 +100,7 @@ curl "http://localhost:8000/api/user" \
   -H "Authorization: Bearer VOTRE_TOKEN"
 ```
 
-### 3. Se deconnecter
+### 4. Se deconnecter
 
 ```bash
 curl -X POST "http://localhost:8000/api/logout" \
@@ -92,7 +122,7 @@ Les erreurs de validation Laravel retournent typiquement un statut HTTP `422` av
 
 ## Routes disponibles
 
-Toutes les routes ci-dessous, sauf `/api/login`, necessitent :
+Toutes les routes ci-dessous, sauf `/api/login` et `/api/login/pin`, necessitent :
 
 ```http
 Authorization: Bearer VOTRE_TOKEN
@@ -103,7 +133,8 @@ Accept: application/json
 
 | Methode | Route | Description |
 | --- | --- | --- |
-| POST | `/api/login` | Connexion et creation d'un token Sanctum |
+| POST | `/api/login` | Connexion email/mot de passe et creation d'un token Sanctum |
+| POST | `/api/login/pin` | Connexion par code PIN simple et creation d'un token Sanctum |
 | GET | `/api/user` | Profil de l'utilisateur connecte |
 | POST | `/api/logout` | Suppression du token courant |
 
